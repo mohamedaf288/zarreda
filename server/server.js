@@ -12,6 +12,7 @@ app.use(express.json());
 
 // Connexion à MongoDB Atlas
 const MONGODB_URI =
+  process.env.MONGODB_URI ||
   "mongodb+srv://zarreda:S9mQ44L0WMx07DD1@cluster0.fqswxwq.mongodb.net/zarreda?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose
@@ -29,9 +30,21 @@ mongoose
   });
 
 // Routes
-app.use("/order", orderRoutes);
+app.use("/api/order", orderRoutes);
+
+// Route de test pour vérifier que l'API fonctionne
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API is working!" });
+});
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
-});
+
+// Pour le développement local
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`Serveur démarré sur le port ${PORT}`);
+  });
+}
+
+// Pour Vercel
+export default app;
